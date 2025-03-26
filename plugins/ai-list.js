@@ -1,37 +1,21 @@
 const axios = require("axios");
 const { cmd } = require("../command");
 
-// Variable to control ChatGPT command status
-let isChatGptOn = false;
-
 cmd({
     pattern: "chatgpt",
     alias: "ai",
     desc: "Interact with ChatGPT using the Dreaded API.",
     category: "ai",
     react: "🤖",
-    use: "<your query> | on/off",
+    use: "<your query>",
     filename: __filename,
 }, async (conn, mek, m, { from, args, q, reply }) => {
     try {
-        // Check if the user is toggling the command on/off
-        if (args[0] === 'on') {
-            isChatGptOn = true;
-            return reply("✅ ChatGPT is now ON. All messages will be replied to by ChatGPT.");
-        }
-
-        if (args[0] === 'off') {
-            isChatGptOn = false;
-            return reply("❌ ChatGPT is now OFF. No messages will be replied to by ChatGPT.");
-        }
-
-        // If ChatGPT is off, return and do nothing
-        if (!isChatGptOn) return reply("⚠️ ChatGPT is currently OFF. Use '.gpt on' to enable it.");
-
-        // Check user input for a query
+        // Check user input
         if (!q) return reply("⚠️ Please provide a query for ChatGPT.\n\nExample:\n.gpt What is AI?");
 
         const text = encodeURIComponent(q); // Encode user query
+
         const url = `https://api.dreaded.site/api/chatgpt?text=${text}`;
 
         console.log('Requesting URL:', url); // Debug log
