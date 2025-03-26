@@ -193,55 +193,36 @@ async (conn, mek, m, { from, prefix, quoted, q, reply }) => {
     try { 
         if (!q) return await reply("❌ Please provide a YouTube URL or song name.");
 
-        // Initial message
-        await reply("🎶 Downloading Audio... Please wait for *SHABAN-MD* user!");
+        // Initial reply
+        reply("🎶 Fetching Audio... Please wait!");
 
-        const yt = await ytsearch(q);
-        if (yt.results.length < 1) return reply("❌ No results found!");
-
-        let yts = yt.results[0];  
-        let apiUrl = `https://api.davidcyriltech.my.id/download/ytmp3?url=${encodeURIComponent(yts.url)}`;
-
-        console.log("🔗 API URL:", apiUrl); // Debugging
-
+        // Direct API call
+        let apiUrl = `https://apis.davidcyriltech.my.id/download/ytmp3?url=${encodeURIComponent(q)}`;
         let response = await fetch(apiUrl);
         let data = await response.json();
 
-        console.log("📥 API Response:", data); // Debugging
-
-        if (!data.success || !data.result.download_url) {
-            return reply("❌ Failed to fetch the audio. Please try again later.");
+        if (!data.success || !data.result?.download_url) {
+            return reply("❌ Unable to fetch the song. Try another one.");
         }
 
         let ytmsg = `🎶 *SHABAN-MD MUSIC DOWNLOADER* 🎶
 
 📀 *Title:* ${data.result.title}
 🔊 *Quality:* ${data.result.quality}
-🔗 *YouTube Link:* ${yts.url}
+🔗 *YouTube Link:* ${q}
 
 > *© Powered By Shaban-MD ♡*`;
 
-        // Thumbnail Selection
-        let thumbnailUrl = data.result.thumbnail || yts.thumbnail;
+        let thumbnailUrl = data.result.thumbnail;
 
-        // Send Thumbnail Image
-        await conn.sendMessage(from, { 
-            image: { url: thumbnailUrl }, 
-            caption: ytmsg 
-        }, { quoted: mek });
-
-        console.log("🎼 Sending audio from URL:", data.result.download_url); 
-
-        // Send Audio File
-        await conn.sendMessage(from, { 
-            audio: { url: data.result.download_url }, 
-            mimetype: "audio/mpeg" 
-        }, { quoted: mek });
-
-        console.log("✅ Audio sent successfully!");
+        // Parallel Processing (Faster)
+        await Promise.all([
+            conn.sendMessage(from, { image: { url: thumbnailUrl }, caption: ytmsg }, { quoted: mek }),
+            conn.sendMessage(from, { audio: { url: data.result.download_url }, mimetype: "audio/mpeg" }, { quoted: mek })
+        ]);
 
     } catch (e) {
-        console.log("❌ Error:", e); 
-        reply("❌ An error occurred. Please try again later.");
+        console.error("❌ Error:", e);
+        reply("❌ Error fetching the song. Please try again.");
     }
 });
