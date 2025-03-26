@@ -16,7 +16,7 @@ cmd({
 
         const text = encodeURIComponent(q); // Encode user query
 
-        const url = `https://api.dreaded.site/api/chatgpt?text=${text}`;
+        const url = `https://bk9.fun/ai/chataibot?q=${text}`;
 
         console.log('Requesting URL:', url); // Debug log
 
@@ -29,17 +29,17 @@ cmd({
 
         console.log('Full API Response:', response.data); // Debug log
 
-        if (!response.data || response.data.status !== 200 || !response.data.success) {
+        if (!response.data || !response.data.status) {
             return reply("❌ No valid response from the GPT API. Please try again later.");
         }
 
-        const gptResponse = response.data.result.prompt; // Updated structure
+        const gptResponse = response.data.BK9; // Accessing the new structure
 
         if (!gptResponse) {
             return reply("❌ The API returned an unexpected format. Please try again later.");
         }
 
-        const formattedInfo = `🤖 *SHABAN-MD AI:*\n\n${gptResponse}`;
+        const formattedInfo = `🤖 *BK9 AI:*\n\n${gptResponse}`;
 
         await reply(formattedInfo); // Sending only text response
 
