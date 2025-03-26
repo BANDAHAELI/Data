@@ -69,13 +69,6 @@ async(conn, mek, m, {from, l, quoted, body, isCmd, command, args, q, isGroup, se
             { quoted: mek }
         );
 
-        // Optionally, send an audio file related to the prayer time
-        await conn.sendMessage(from, {
-            audio: { url: 'https://github.com/JawadYTX/KHAN-DATA/raw/refs/heads/main/autovoice/Islamic.m4a' },
-            mimetype: 'audio/mp4',
-            ptt: false
-        }, { quoted: mek });
-
     } catch (e) {
         console.log(e);
         reply('*Error occurred while fetching prayer times and weather.*');
