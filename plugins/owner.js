@@ -19,15 +19,7 @@ async (conn, mek, m, { from }) => {
                       `TEL;type=CELL;type=VOICE;waid=${ownerNumber.replace('+', '')}:${ownerNumber}\n` + 
                       'END:VCARD';
 
-        // Send the vCard
-        const sentVCard = await conn.sendMessage(from, {
-            contacts: {
-                displayName: ownerName,
-                contacts: [{ vcard }]
-            }
-        });
-
-        // Send the owner contact message with image and audio
+        // Send vCard and image in a single message
         await conn.sendMessage(from, {
             image: { url: 'https://files.catbox.moe/0rt9jy.jpg' }, // Image URL from your request
             caption: `╭━━〔 *SHABAN-MD* 〕━━┈⊷
@@ -38,7 +30,11 @@ async (conn, mek, m, { from }) => {
 ┃◈┃• *Version*: 3.0.0 Beta
 ┃◈└───────────┈⊷
 ╰──────────────┈⊷
-> © ᴘᴏᴡᴇʀᴇᴅ ʙʏ Sʜᴀʙᴀɴ Mᴅ`, // Display the owner's details
+> © ᴘᴏᴡᴇʀᴇʀᴅ ʙʏ Sʜᴀʙᴀɴ Mᴅ`, // Display the owner's details
+            contacts: {
+                displayName: ownerName,
+                contacts: [{ vcard }] // Send vCard in the same message
+            },
             contextInfo: {
                 mentionedJid: [`${ownerNumber.replace('+', '')}@s.whatsapp.net`], 
                 forwardingScore: 999,
@@ -49,13 +45,6 @@ async (conn, mek, m, { from }) => {
                     serverMessageId: 143
                 }            
             }
-        }, { quoted: mek });
-
-        // Send audio as per your request
-        await conn.sendMessage(from, {
-            audio: { url: 'https://github.com/MRSHABAN40/SHABAN-MD_DATABASE/raw/refs/heads/main/autovoice/owner.mp3' }, // Audio URL
-            mimetype: 'audio/mp4',
-            ptt: true
         }, { quoted: mek });
 
     } catch (error) {
