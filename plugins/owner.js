@@ -34,18 +34,8 @@ async (conn, mek, m, { from }) => {
             contacts: {
                 displayName: ownerName,
                 contacts: [{ vcard }] // Send vCard in the same message
-            },
-            contextInfo: {
-                mentionedJid: [`${ownerNumber.replace('+', '')}@s.whatsapp.net`], 
-                forwardingScore: 999,
-                isForwarded: true,
-                forwardedNewsletterMessageInfo: {
-                    newsletterJid: '120363358310754973@newsletter',
-                    newsletterName: 'SʜᴀʙᴀɴMᴅ',
-                    serverMessageId: 143
-                }            
             }
-        }, { quoted: mek });
+        });
 
     } catch (error) {
         console.error(error);
