@@ -39,7 +39,7 @@ cmd({
             return reply("❌ The API returned an unexpected format. Please try again later.");
         }
 
-        const formattedInfo = `🤖 *SHABAN AI:*\n\n${gptResponse}`;
+        const formattedInfo = `🤖 *BK9 AI:*\n\n${gptResponse}`;
 
         await reply(formattedInfo); // Sending only text response
 
