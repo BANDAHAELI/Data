@@ -13,28 +13,18 @@ async (conn, mek, m, { from }) => {
         const ownerNumber = config.OWNER_NUMBER; // Fetch owner number from config
         const ownerName = config.OWNER_NAME;     // Fetch owner name from config
 
-        const vcard = 'BEGIN:VCARD\n' +
-                      'VERSION:3.0\n' +
-                      `FN:${ownerName}\n` +  
-                      `TEL;type=CELL;type=VOICE;waid=${ownerNumber.replace('+', '')}:${ownerNumber}\n` + 
-                      'END:VCARD';
-
-        // Send vCard and image in a single message
+        // Send the owner details message with a digital touch
         await conn.sendMessage(from, {
-            image: { url: 'https://files.catbox.moe/0rt9jy.jpg' }, // Image URL from your request
-            caption: `╭━━〔 *SHABAN-MD* 〕━━┈⊷
-┃◈╭─────────────·๏
-┃◈┃• *Here is the owner details*
-┃◈┃• *Name* - ${ownerName}
-┃◈┃• *Number* ${ownerNumber}
-┃◈┃• *Version*: 3.0.0 Beta
-┃◈└───────────┈⊷
-╰──────────────┈⊷
-> © ᴘᴏᴡᴇʀᴇʀᴅ ʙʏ Sʜᴀʙᴀɴ Mᴅ`, // Display the owner's details
-            contacts: {
-                displayName: ownerName,
-                contacts: [{ vcard }] // Send vCard in the same message
-            }
+            text: `╭━━━◆  *SHABAN-MD*  ◆━━━╮
+┃▏➤ *Owner Details:*
+┃▏◈ *Name* ➤ ${ownerName}
+┃▏◈ *Number* ➤ ${ownerNumber}
+┃▏◈ *Bot Version* ➤ 3.0.0 Beta
+┃▏◈ *Status* ➤ Active 🔥
+┃▏◈ *Powered By* ➤ Sʜᴀʙᴀɴ Mᴅ
+┃▏◈ *Date* ➤ ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}
+╰━━━━━━━━━━━━━━━━━━━━╯
+> 📡 *Sʜᴀʙᴀɴ Mᴅ | Digital Assistant*`
         });
 
     } catch (error) {
