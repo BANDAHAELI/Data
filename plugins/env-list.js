@@ -61,13 +61,6 @@ async (conn, mek, m, { from, quoted, reply }) => {
             { quoted: mek }
         );
 
-        // Send notification audio
-        await conn.sendMessage(from, {
-            audio: { url: 'https://github.com/MRSHABAN40/SHABAN-MD_DATABASE/raw/refs/heads/main/Menu_Data/env.mp3' }, // Audio File
-            mimetype: 'audio/mp4',
-            ptt: true
-        }, { quoted: mek });
-
     } catch (error) {
         console.log(error);
         reply(`❌ *Error:* ${error.message}`);
