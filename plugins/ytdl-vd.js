@@ -28,11 +28,11 @@ cmd({
             return reply("⚠️ *Failed to fetch the video.* Please try again later.");
         }
 
-        // 🎥 Digital UI Message
+        // 🎥 Digital UI Message (Added "Downloading By Shaban MD")
         let ytmsg = `🎬 *SHABAN-MD VIDEO DOWNLOADER* 🎬
 
-📌 *Title:* ${data.result.title}
-🎥 *Quality:* ${data.result.quality}`;
+🎥 *Quality:* ${data.result.quality}
+📥 *Downloading By Shaban MD*`;
 
         // ⬇️ Send Video File with Thumbnail
         await conn.sendMessage(from, { 
@@ -40,8 +40,7 @@ cmd({
             mimetype: "video/mp4",
             caption: ytmsg,
             contextInfo: { externalAdReply: { 
-                title: data.result.title, 
-                body: "🎥 YouTube Video", 
+                body: "🎥 YouTube Video - Downloading By Shaban MD", 
                 thumbnailUrl: data.result.thumbnail, 
                 mediaType: 2, 
                 renderLargerThumbnail: true
