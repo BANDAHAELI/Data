@@ -51,11 +51,11 @@ cmd({
 });
 
 
-// Extra Mp3
+// David Mp3
 
 cmd({ 
     pattern: "play", 
-    alias: ["play2", "mp3"], 
+    alias: ["play2",], 
     react: "🎶", 
     desc: "Download YouTube song",
     category: "main", 
@@ -74,6 +74,74 @@ async (conn, mek, m, { from, prefix, quoted, q, reply }) => {
 
         let yts = yt.results[0];  
         let apiUrl = `https://apis.davidcyriltech.my.id/download/ytmp3?url=${encodeURIComponent(yts.url)}`;
+
+        console.log("🔗 API URL:", apiUrl); // Debugging
+
+        let response = await fetch(apiUrl);
+        let data = await response.json();
+
+        console.log("📥 API Response:", data); // Debugging
+
+        if (!data.success || !data.result || !data.result.download_url) {
+            return reply("❌ Failed to fetch the audio. Please try again later.");
+        }
+
+        let ytmsg = `🎶 *SHABAN-MD MUSIC DOWNLOADER* 🎶
+
+📀 *Title:* ${data.result.title}
+🔊 *Quality:* ${data.result.quality}
+🔗 *YouTube Link:* ${yts.url}
+
+> *© Powered By Shaban-MD ♡*`;
+
+        // Thumbnail Selection
+        let thumbnailUrl = data.result.thumbnail || yts.thumbnail;
+
+        // Send Thumbnail Image
+        await conn.sendMessage(from, { 
+            image: { url: thumbnailUrl }, 
+            caption: ytmsg 
+        }, { quoted: mek });
+
+        console.log("🎼 Sending audio from URL:", data.result.download_url); 
+
+        // Send Audio File
+        await conn.sendMessage(from, { 
+            audio: { url: data.result.download_url }, 
+            mimetype: "audio/mpeg" 
+        }, { quoted: mek });
+
+        console.log("✅ Audio sent successfully!");
+
+    } catch (e) {
+        console.log("❌ Error:", e); 
+        reply("❌ An error occurred. Please try again later.");
+    }
+});
+
+// Gifted Mp3
+
+cmd({ 
+    pattern: "mp3", 
+    alias: ["mp3", "mp3"], 
+    react: "🔪", 
+    desc: "Download YouTube song",
+    category: "main", 
+    use: '.song <Yt url or Name>', 
+    filename: __filename 
+}, 
+async (conn, mek, m, { from, prefix, quoted, q, reply }) => { 
+    try { 
+        if (!q) return await reply("❌ Please provide a YouTube URL or song name.");
+
+        // Initial message
+        await reply("🎶 Downloading Audio... Please wait for *SHABAN-MD* user!");
+
+        const yt = await ytsearch(q);
+        if (yt.results.length < 1) return reply("❌ No results found!");
+
+        let yts = yt.results[0];  
+        let apiUrl = `https://apis.giftedtech.web.id/api/download/ytmp3?apikey=gifted-md&url=${encodeURIComponent(yts.url)}`;
 
         console.log("🔗 API URL:", apiUrl); // Debugging
 
