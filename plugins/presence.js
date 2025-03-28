@@ -23,14 +23,36 @@ cmd({
 },    
 async (conn, mek, m, { from, body, isOwner }) => {
     const filePath = path.join(__dirname, '../data/autovoice.json');
-    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+
+    // File existence & JSON error handle karein
+    if (!fs.existsSync(filePath) || fs.readFileSync(filePath, "utf8").trim() === "") {
+        fs.writeFileSync(filePath, JSON.stringify({}, null, 2));
+    }
+
+    let data = {};
+    try {
+        data = JSON.parse(fs.readFileSync(filePath, "utf8"));
+    } catch (error) {
+        console.error("JSON Parsing Error in autovoice.json:", error);
+        return;
+    }
+
+    console.log("Received Body:", body);
+    console.log("Loaded Data from JSON:", data);
+
     for (const text in data) {
         if (body.toLowerCase() === text.toLowerCase()) {
-            
             if (config.AUTO_VOICE === 'true') {
-                //if (isOwner) return;        
                 await conn.sendPresenceUpdate('recording', from);
-                await conn.sendMessage(from, { audio: { url: data[text] }, mimetype: 'audio/mpeg', ptt: true }, { quoted: mek });
+                if (data[text]) {  // Ensure ke value exist karti hai
+                    await conn.sendMessage(from, { 
+                        audio: { url: data[text] }, 
+                        mimetype: 'audio/mpeg', 
+                        ptt: true 
+                    }, { quoted: mek });
+                } else {
+                    console.error("Audio file not found for:", text);
+                }
             }
         }
     }                
