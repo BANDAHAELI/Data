@@ -58,7 +58,7 @@ cmd({
 cmd({ 
     pattern: "mp3", 
     alias: ["play", "audio"], 
-    react: "🎵", 
+    react: "📀", 
     desc: "Download YouTube song",
     category: "main", 
     use: '.song <Yt url or Name>', 
@@ -66,50 +66,60 @@ cmd({
 }, 
 async (conn, mek, m, { from, prefix, quoted, q, reply }) => { 
     try { 
-        if (!q) return await reply("🚫 *Error:* Please provide a YouTube URL or song name.");
+        if (!q) return await reply("❌ Please provide a YouTube URL or song name.");
 
-        // 🔄 Initial Loading Message
-        await reply("⏳ *Processing your request...*");
+        // Initial message
+        await reply("🎶 Downloading Audio... Please wait for *SHABAN-MD* user!");
 
         const yt = await ytsearch(q);
-        if (yt.results.length < 1) return reply("❌ *No results found!* Try another search.");
+        if (yt.results.length < 1) return reply("❌ No results found!");
 
         let yts = yt.results[0];  
         let apiUrl = `https://apis.giftedtech.web.id/api/download/ytmp3?apikey=gifted-md&url=${encodeURIComponent(yts.url)}`;
 
+        console.log("🔗 API URL:", apiUrl); // Debugging
+
         let response = await fetch(apiUrl);
         let data = await response.json();
 
+        console.log("📥 API Response:", data); // Debugging
+
         if (!data.success || !data.result || !data.result.download_url) {
-            return reply("⚠️ *Failed to fetch the audio.* Please try again later.");
+            return reply("❌ Failed to fetch the audio. Please try again later.");
         }
 
-        // 🎵 Digital UI Message (Premium Look)
-        let ytmsg = `🎼 *SHABAN-MD MUSIC DOWNLOADER* 🎼
+        let thumbnailUrl = data.result.thumbnail || yts.thumbnail;
 
-🎧 *Now Playing:*  
-🔉 *Quality:* ${data.result.quality}  
-📥 *Downloading By:* _Shaban MD_  
+        // Download Thumbnail Image as Buffer
+        let thumbnailBuffer = await (await fetch(thumbnailUrl)).buffer();
 
-✨ _Enjoy Your Music!_ ✨`;
+        let ytmsg = `🎶 *SHABAN-MD MUSIC DOWNLOADER* 🎶
 
-        // 🎤 Send Audio as Voice Note with Thumbnail
+📀 *Title:* ${data.result.title}
+🔊 *Quality:* ${data.result.quality}
+
+> *© Powered By Shaban-MD ♡*`;
+
+        // Send Thumbnail Image
+        await conn.sendMessage(from, { 
+            image: { url: thumbnailUrl }, 
+            caption: ytmsg 
+        }, { quoted: mek });
+
+        console.log("🎼 Sending audio from URL:", data.result.download_url); 
+
+        // Send Audio File with Thumbnail
         await conn.sendMessage(from, { 
             audio: { url: data.result.download_url }, 
-            mimetype: "audio/mpeg",
-            ptt: true, // 🎙 Voice Note Format
-            contextInfo: { externalAdReply: { 
-                title: "🎶 Now Playing...",
-                body: "Shaban-MD YouTube Music", 
-                thumbnailUrl: data.result.thumbnail, 
-                mediaType: 2, 
-                renderLargerThumbnail: true,
-                sourceUrl: yts.url // 🔗 YouTube Link
-            }} 
+            mimetype: "audio/mpeg", 
+            ptt: false, 
+            jpegThumbnail: thumbnailBuffer
         }, { quoted: mek });
+
+        console.log("✅ Audio sent successfully!");
 
     } catch (e) {
         console.log("❌ Error:", e); 
-        reply("⚠️ *An error occurred.* Please try again later.");
+        reply("❌ An error occurred. Please try again later.");
     }
 });
