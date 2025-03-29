@@ -1,12 +1,19 @@
 FROM node:lts-buster
 
-RUN git clone https://github.com/BANDAHAELI/Data /root/Data
-WORKDIR /root/Data
+# Set working directory
+WORKDIR /
 
-RUN npm install
+# Copy package.json and package-lock.json
+COPY package*.json ./
 
+# Install dependencies
+RUN npm install --omit=dev && npm install -g pm2
+
+# Copy rest of the files
 COPY . .
 
+# Expose necessary ports
 EXPOSE 9090
 
-CMD ["node", "index.js"]
+# Start the application
+CMD ["pm2-runtime", "start", "index.js", "--name", "SHABAN-MD"]
