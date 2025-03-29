@@ -1,19 +1,11 @@
 FROM node:lts-buster
 
-# Set working directory
-WORKDIR /
+RUN git clone https://github.com/shani-kh/Data /root/Data
 
-# Copy package.json and package-lock.json
-COPY package*.json ./
+WORKDIR /root/Data
 
-# Install dependencies
-RUN npm install --omit=dev && npm install -g pm2
+RUN npm install
 
-# Copy rest of the files
-COPY . .
-
-# Expose necessary ports
 EXPOSE 9090
 
-# Start the application
-CMD ["pm2-runtime", "start", "index.js", "--name", "SHABAN-MD"]
+CMD ["node", "index.js"]
