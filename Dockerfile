@@ -1,7 +1,12 @@
 FROM node:lts-buster
+
 RUN git clone https://github.com/shani-kh/Data /root/Data
 WORKDIR /root/Data
-RUN npm install && npm install -g pm2 || yarn install --network-concurrency 1
+
+RUN npm install
+
 COPY . .
+
 EXPOSE 9090
-CMD ["npm", "start"]
+
+CMD ["node", "index.js"]
